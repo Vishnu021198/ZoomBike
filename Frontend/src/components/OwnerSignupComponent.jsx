@@ -1,0 +1,126 @@
+import React from "react";
+import { useForm } from "react-hook-form";
+import { HiOutlineArrowCircleRight } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+
+const fields = [
+  { label: 'Name', name: 'name', type: 'text', required: true, gridCols: 2, placeholder: 'Enter your name' },
+  { label: 'Email', name: 'email', type: 'email', required: true, gridCols: 2, placeholder: 'Enter your email' },
+  { label: 'Phone Number', name: 'phone_number', type: 'tel', required: true, gridCols: 2, placeholder: 'Enter your phone number' },
+  { label: 'Bike License Number', name: 'bike_license_number', type: 'text', required: true, gridCols: 2, placeholder: 'Enter your Bike License Number' },
+  { label: 'Password', name: 'password', type: 'password', required: true, gridCols: 1, placeholder: 'Enter your password' },
+  { label: 'Confirm Password', name: 'password2', type: 'password', required: true, gridCols: 1, placeholder: 'Confirm your password' },
+];
+
+export default function OwnerSignupComponent () {
+    const navigate = useNavigate()
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      watch,
+    } = useForm();
+
+    const [formData, setFormData] = useState(new FormData());
+
+    const onSubmit = async (data) => {
+      try {
+        const formData = new FormData();
+        console.log(data);
+    
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("phone_number", data.phone_number);
+        formData.append("bike_license_number", data.bike_license_number);
+        formData.append("password", data.password);
+        formData.append("password2", data.password2);
+
+        console.log(formData, "formdata");
+    
+        const response = await axios.post(
+          "http://localhost:8000/api/owner/register/",
+          formData,
+          {
+           
+          }
+        );
+    
+        console.log(response.data, "Success");
+        localStorage.setItem("registeredEmail", data.email);
+
+        navigate("/ownerverifyOTP");
+      } catch (error) {
+        console.error(
+          "Registration failed:",
+          error.response?.data || error.message
+        );
+      }
+    };
+    
+
+  return (
+    <div>
+      <div className="container mx-auto mt-48">
+        <div className="lg:w-7/12 pb-10 pt-5 w-full p-4 flex flex-wrap justify-center shadow-2xl my-20 rounded-md mx-auto">
+          <div className="pb-5">
+            <h1 className="text-3xl font-bold">Owner Registeration</h1>
+          </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col justify-start items-center w-full m-auto"
+          >
+            <div className="grid grid-cols-1 mb-6 md:grid-cols-2 gap-3 w-full">
+              {fields.map((field, index) => (
+                <div
+                  key={index}
+                  className={`text-left flex flex-col gap-2 w-full ${
+                    field.gridCols === 2 ? "md:col-span-2" : ""
+                  }`}
+                >
+                  <label className="font-semibold">{field.label}</label>
+                  <input
+                    {...register(field.name, {
+                      required: field.required,
+                    })}
+                    className={`border border-gray-300 text-sm font-semibold mb-1 max-w-full w-full outline-none rounded-md m-0 py-3 px-4 md:py-3 md:px-4 md:mb-0 focus:border-red-500 ${
+                      field.gridCols === 2 ? "md:w-full" : ""
+                    }`}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                  />
+                  {errors[field.name] && (
+                    <span>This field is required</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="w-full text-left">
+              <button
+                type="submit"
+                className="flex justify-center text-bold items-center gap-2 w-full py-3 px-4 bg-blue-500 text-white text-md font-bold border border-blue-500 rounded-md ease-in-out duration-150 shadow-slate-600 hover:bg-white hover:text-blue-500 lg:m-0 md:px-6"
+                title="Confirm Order"
+              >
+                <span>Register</span>
+                <HiOutlineArrowCircleRight size={20} />
+              </button>
+            </div>
+            <div className="mt-4 font-semibold text-sm text-slate-500 text-center md:text-left">
+                Already have an account?{" "}
+                <a
+                    className="text-red-600 hover:underline hover:underline-offset-4"
+                    onClick={() => navigate('/ownerlogin')}
+
+                    href="#"
+                >
+                    Login
+                </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
