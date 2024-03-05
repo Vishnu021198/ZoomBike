@@ -46,6 +46,8 @@ class Bike(models.Model):
     city = models.CharField(max_length=50, choices=CITY_CHOICES)
     images = models.ImageField(upload_to='bike_images/', blank=True, null=True)
     bike_rent = models.PositiveIntegerField()
+    available_from = models.DateField()
+    available_to = models.DateField()
 
     def __str__(self):
         return f"{self.brand.name} - {self.model.name} ({self.registration_number})"

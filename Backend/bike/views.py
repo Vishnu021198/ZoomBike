@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from .serializers import BikeBrandSerializer, BikeModelSerializer
 from rest_framework.permissions import AllowAny
 from owner.models import Owner
+from datetime import datetime
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -24,6 +25,11 @@ def add_bike(request):
         city = request.data.get('city')
         bike_rent = request.data.get('bike_rent')
         images = request.data.get('images')
+        available_from = request.data.get('available_from')
+        available_to = request.data.get('available_to')
+
+        available_from = datetime.strptime(available_from, '%Y-%m-%d').date()
+        available_to = datetime.strptime(available_to, '%Y-%m-%d').date()
 
         try:
             brand = BikeBrand.objects.get(id=brand_id)
@@ -40,7 +46,9 @@ def add_bike(request):
                 year_of_registration=year_of_registration,
                 city=city,
                 bike_rent=bike_rent,
-                images=images
+                images=images,
+                available_from=available_from,
+                available_to=available_to
             )
 
             serializer = BikeSerializer(bike)
