@@ -3,6 +3,9 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
+import { setFilteredBikes } from '../redux/Slices/userSlice';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const CITY_CHOICES = [
   ['Kasaragod', 'Kasaragod'],
@@ -22,6 +25,7 @@ const CITY_CHOICES = [
 ];
 
 function UserHomeComponent() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -50,12 +54,48 @@ function UserHomeComponent() {
     };
 
     fetchBikes();
+    console.log(bikes,"bikessssssssssssss")
   }, []);
 
   const handleCityChange = (e) => {
     setSelectedCity(e.target.value);
   };
+  const morebikes = () => {
+    navigate('/userbikelist')
+  };
 
+
+  const handleSearch = async () => {
+    try {
+      let params = {};
+      if (selectedCity) {
+        params.city = selectedCity;
+      }
+      if (startDate) {
+        params.start_date = startDate.toISOString().split('T')[0];
+      }
+      if (endDate) {
+        params.end_date = endDate.toISOString().split('T')[0];
+      }
+  
+      // Print selected city, start date, and end date before sending to the backend
+      console.log("Selected City:", selectedCity);
+      console.log("Start Date:", startDate);
+      console.log("End Date:", endDate);
+  
+      // Only send request if at least one of city, start date, or end date is available
+      if (Object.keys(params).length > 0) {
+        const response = await axios.get('http://127.0.0.1:8000/api/user/bike-list/', { params });
+        const filteredBikes = response.data;
+        setBikes(filteredBikes);
+        dispatch(setFilteredBikes(filteredBikes));
+        navigate('/userbikelist');
+      }
+    } catch (error) {
+      console.error('Error fetching bikes:', error);
+    }
+  };
+  
 
 
   return (
@@ -88,8 +128,10 @@ function UserHomeComponent() {
                 </option>
               ))}
             </select>
+            
             <button
               type="submit"
+              onClick={handleSearch}
               className="text-white absolute end-2.5 bottom-2.5 bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
             >
               Search
@@ -142,53 +184,40 @@ function UserHomeComponent() {
             </div>
           </div>
         </div>
+        
       </div>
 
       <h2 className="text-dark  text-center font-semibold text-5xl mb-8 mt-5">Pick Your Ride!</h2>
 
       <div className="flex flex-wrap justify-center">
+        
         {bikes.map((bike) => (
             <div key={bike.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mr-2 ml-10">
+            <Link to={`/userbikedetail/${bike.id}`}>
             <a href="#">
-                <img className="p-8 rounded-t-lg" src={bike.images} alt="product image" />
+                <img className="p-8 rounded-t-lg" src={`http://127.0.0.1:8000/${bike.images}`} alt="product image" />
             </a>
             <div className="px-5 pb-5">
                 <a href="#">
                     <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{bike.brand.name} - {bike.model.name}</h5>
                 </a>
-                <div className="flex items-center mt-2.5 mb-5">
-                    <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                        <svg className="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                        </svg>
-                        <svg className="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                        </svg>
-                        <svg className="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                        </svg>
-                        <svg className="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                        </svg>
-                        <svg className="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                        </svg>
-                    </div>
-                    <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">5.0</span>
-                </div>
+                <h5 className="text-xs mt-2 font-semibold tracking-tight text-gray-900 dark:text-white">{bike.city}</h5>
                 <div className="flex items-center justify-between">
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">₹ {bike.bike_rent}</span>
                     <a href="#" className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Book Now</a>
                 </div>
+                
             </div>
+            </Link>
             </div>
             ))}
         </div>
         <div> 
         </div>
         <div className="flex items-center justify-center mt-4 mb-5">
+        
         <button
-          type="button"
+          type="submit"
           onClick={() => navigate('/userbikelist')}
           className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
         >

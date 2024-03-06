@@ -10,6 +10,9 @@ from account.emails import *
 from rest_framework.decorators import api_view, permission_classes
 from bike.models import Bike
 from bike.serializers import BikeSerializer
+from django.utils import timezone
+from datetime import datetime
+
 
 
 def get_tokens_for_user(user):
@@ -158,11 +161,46 @@ class Home(APIView):
 
 class BikeList(APIView):
     permission_classes = [AllowAny]
+    
     def get(self, request):
+        # Print received query parameters
+        city = request.GET.get('city', None)
+        start_date_str = request.GET.get('start_date', None)
+        end_date_str = request.GET.get('end_date', None)
+        print("Received City:", city)
+        print("Received Start Date:", start_date_str)
+        print("Received End Date:", end_date_str)
+
+        # Filter bikes based on city
         bikes = Bike.objects.all()
+        if city:
+            bikes = bikes.filter(city=city)
+        
+        # Filter bikes based on availability between start and end dates
+        if start_date_str and end_date_str:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+            end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
+            bikes = bikes.filter(available_from__lte=start_datetime, available_to__gte=end_datetime)
+
+        # Print filtered bikes count
+        print("Number of bikes after filtering:", bikes.count())
+
         serializer = BikeSerializer(bikes, many=True)
         return Response(serializer.data)
     
+
+class BikeDetailView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, bikeId):
+        try:
+            bike = Bike.objects.get(id=bikeId)
+            serializer = BikeSerializer(bike)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Bike.DoesNotExist:
+            return Response({"error": "Bike not found"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class UserProfileView(APIView):
     permission_classes = [AllowAny]  # Ensure user is authenticated

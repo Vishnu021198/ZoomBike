@@ -7,6 +7,7 @@ function HomePage() {
   return (
     <>
     <UserNavBarComponent/>
+    
     <UserHomeComponent/>
     <UserFooterComponent/>
     </>

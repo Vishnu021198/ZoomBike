@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route,Routes } from 'react-router-dom'
+import { Route,Router,Routes } from 'react-router-dom'
 import { UserLoginPage } from './Pages/UserLoginPage'
 import { UserSignupPage } from './Pages/UserSignupPage'
 import { OwnerLoginPage } from './Pages/OwnerLoginPage'
@@ -14,6 +14,7 @@ import OwnerOTPVerificationPage from './Pages/OwnerOTPVerificationPage'
 import UserBikeListingPage from './Pages/UserBikeListingPage'
 import OwnerBikeListPage from './Pages/OwnerBikeListPage'
 import UserProfilePage from './Pages/UserProfilePage'
+import UserBikeDetailPage from './Pages/UserBikeDetailPage'
 function App() {
   
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/userbikelist" element={<UserBikeListingPage/>}/>
         <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>
         <Route path="/userprofile" element={<UserProfilePage/>}/>
+        <Route path="/userbikedetail/:bikeId" element={<UserBikeDetailPage />} />
 
         
         </Routes>

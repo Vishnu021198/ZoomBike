@@ -58,6 +58,7 @@ export const UserNavBarComponent = () => {
 
   return (
     <>
+    
       <nav className="fixed w-full z-20 top-0 start-0 border-b border-gray-200 bg-white">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="#" onClick={() => navigate('/homepage')} className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -94,6 +95,7 @@ export const UserNavBarComponent = () => {
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
               </svg>
             </button>
+            
           </div>
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:border-gray-700">

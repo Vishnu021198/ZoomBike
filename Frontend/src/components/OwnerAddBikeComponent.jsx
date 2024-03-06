@@ -150,13 +150,11 @@ console.log(Token.access,"TOKEN")
     };
 
     const handleStartDateChange = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        setStartDate(formattedDate);
+        setStartDate(date);
     };
     
     const handleEndDateChange = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        setEndDate(formattedDate);
+        setEndDate(date);
     };
     
     
