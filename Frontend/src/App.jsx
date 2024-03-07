@@ -15,6 +15,7 @@ import UserBikeListingPage from './Pages/UserBikeListingPage'
 import OwnerBikeListPage from './Pages/OwnerBikeListPage'
 import UserProfilePage from './Pages/UserProfilePage'
 import UserBikeDetailPage from './Pages/UserBikeDetailPage'
+import UserReviewBookingPage from './Pages/UserReviewBookingPage'
 function App() {
   
 
@@ -36,8 +37,8 @@ function App() {
         <Route path="/userbikelist" element={<UserBikeListingPage/>}/>
         <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>
         <Route path="/userprofile" element={<UserProfilePage/>}/>
-        <Route path="/userbikedetail/:bikeId" element={<UserBikeDetailPage />} />
-
+        <Route path="/userbikedetail/:bikeId" element={<UserBikeDetailPage />}/>
+        <Route path="/userreviewbooking/:bikeId" element={<UserReviewBookingPage/>}/>
         
         </Routes>
       </div>

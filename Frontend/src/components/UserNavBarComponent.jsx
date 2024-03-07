@@ -46,6 +46,7 @@ export const UserNavBarComponent = () => {
   const handleLogout = async () => {
     try {
       localStorage.removeItem('userName');
+      localStorage.removeItem('userDetails');
       setUserName('');
       setLoggedIn(false);
       setDropdownOpen(false);

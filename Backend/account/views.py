@@ -200,6 +200,44 @@ class BikeDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Bike.DoesNotExist:
             return Response({"error": "Bike not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class CheckAvailabilityView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        bike_id = request.GET.get('bike_id', None)
+        start_date_str = request.GET.get('start_date', None)
+        end_date_str = request.GET.get('end_date', None)
+        print("BIKE_ID:", bike_id)
+
+        # Convert start and end date strings to datetime objects
+        if bike_id and start_date_str and end_date_str:
+            # Remove time zone information
+            start_date_str = start_date_str.split('T')[0]
+            end_date_str = end_date_str.split('T')[0]
+
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+            end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
+
+            # Convert bike availability dates to datetime objects
+            try:
+                bike = Bike.objects.get(id=bike_id)
+                available_from_datetime = timezone.make_aware(datetime.combine(bike.available_from, datetime.min.time()))
+                available_to_datetime = timezone.make_aware(datetime.combine(bike.available_to, datetime.max.time()))
+
+                bikes = [bike] if available_from_datetime <= start_datetime and available_to_datetime >= end_datetime else []
+            except Bike.DoesNotExist:
+                bikes = []
+
+            serializer = BikeSerializer(bikes, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Please provide bike_id, start_date, and end_date parameters."}, status=status.HTTP_400_BAD_REQUEST)
+        
+
 
 
 class UserProfileView(APIView):

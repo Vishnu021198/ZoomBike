@@ -54,7 +54,6 @@ function UserHomeComponent() {
     };
 
     fetchBikes();
-    console.log(bikes,"bikessssssssssssss")
   }, []);
 
   const handleCityChange = (e) => {

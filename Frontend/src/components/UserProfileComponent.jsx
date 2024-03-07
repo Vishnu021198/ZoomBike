@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 
 function UserProfileComponent() {
   const [userDetails, setUserDetails] = useState(() => {
-    // Load owner details from local storage if available
     const savedUserDetails = localStorage.getItem('userDetails');
     return savedUserDetails ? JSON.parse(savedUserDetails) : null;
 });

@@ -1,17 +1,16 @@
 import React from 'react'
 import UserNavBarComponent from '../components/UserNavBarComponent'
-import UserProfileComponent from'../components/UserProfileComponent'
 import UserFooterComponent from '../components/UserFooterComponent'
+import UserReviewBookingComponent from '../components/UserReviewBookingComponent'
 
-
-function UserProfilePage() {
+function UserReviewBookingPage() {
   return (
     <>
         <UserNavBarComponent/>
-        <UserProfileComponent/>
+        <UserReviewBookingComponent/>
         <UserFooterComponent/>
     </>
   )
 }
 
-export default UserProfilePage
+export default UserReviewBookingPage

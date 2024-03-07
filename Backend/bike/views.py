@@ -83,3 +83,4 @@ class BikeListView(APIView):
         serializer = BikeSerializer(bikes, many=True)
         return Response(serializer.data)
     
+

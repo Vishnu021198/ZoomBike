@@ -1,5 +1,6 @@
 from django.db import models
 from owner.models import Owner
+from account.models import User
 
 class BikeBrand(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -51,3 +52,22 @@ class Bike(models.Model):
 
     def __str__(self):
         return f"{self.brand.name} - {self.model.name} ({self.registration_number})"
+
+
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
+    pickup_date = models.DateField()
+    drop_date = models.DateField()
+    number_of_days = models.PositiveIntegerField()
+    city = models.CharField(max_length=50)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    owner = models.ForeignKey('owner.Owner', on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15)
+    aadhar_number = models.CharField(max_length=12)
+    is_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.bike.brand.name} {self.bike.model.name} - {self.pickup_date} to {self.drop_date}"

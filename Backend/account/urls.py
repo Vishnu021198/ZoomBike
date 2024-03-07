@@ -1,5 +1,5 @@
 from django.urls import path, include
-from account.views import UserRegistraionView, UserLoginView, VerifyOTP, Home, BikeList, UserProfileView, BikeDetailView
+from account.views import UserRegistraionView, UserLoginView, VerifyOTP, Home, BikeList, UserProfileView, BikeDetailView, CheckAvailabilityView
 from . import views 
 
 urlpatterns = [
@@ -13,6 +13,8 @@ urlpatterns = [
     path('user-navbar/', UserProfileView.as_view(), name='user-navbar'),
     path('user-profile/', UserProfileView.as_view(), name='user-profile'),
     path('bike-detail/<int:bikeId>/', BikeDetailView.as_view(), name='bike-detail'),
+    path('check-availability/', CheckAvailabilityView.as_view(), name='check_availability'),
+
 
 
 

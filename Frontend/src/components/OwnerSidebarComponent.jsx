@@ -44,6 +44,7 @@ function OwnerSidebarComponent() {
     }, [user]);
 
     const handleLogout = () => {
+        localStorage.removeItem('userName');
         localStorage.removeItem('ownerDetails');
         dispatch(clearUser()); 
         navigate('/ownerlogin');

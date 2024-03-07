@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 function UserBikeDetailComponent() {
     const { bikeId } = useParams();
     const [bike, setBike] = useState(null);
+    const userToken = useSelector(state => state.user.token);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchBikeDetails = async () => {
@@ -19,6 +22,16 @@ function UserBikeDetailComponent() {
 
         fetchBikeDetails();
     }, [bikeId]);
+
+    const handleBookNow = () => {
+        if (userToken) {
+            window.location.href = `/userreviewbooking/${bikeId}`;
+        } else {
+            window.location.href = '/login';
+        }
+    };
+
+
 
     return (
         <>
@@ -44,7 +57,7 @@ function UserBikeDetailComponent() {
                     <div className="mx-10 mb-10">
                         <h1 className="text-3xl font-bold">{bike.brand.name} - {bike.model.name}</h1>
                         <div className="flex items-center mt-4">
-                            <a href="#" className="bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2 text-white">Book Now</a>
+                        <button onClick={handleBookNow} className="bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2 text-white">Book Now</button>
                             <span className="text-3xl font-bold ml-5">₹{bike.bike_rent}</span>
                         </div>
                         <div className="mt-8">
