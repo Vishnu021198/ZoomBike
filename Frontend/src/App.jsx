@@ -37,8 +37,8 @@ function App() {
         <Route path="/userbikelist" element={<UserBikeListingPage/>}/>
         <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>
         <Route path="/userprofile" element={<UserProfilePage/>}/>
-        <Route path="/userbikedetail/:bikeId" element={<UserBikeDetailPage />}/>
-        <Route path="/userreviewbooking/:bikeId" element={<UserReviewBookingPage/>}/>
+        <Route path="/userbikedetail" element={<UserBikeDetailPage />}/>
+        <Route path="/userreviewbooking" element={<UserReviewBookingPage/>}/>
         
         </Routes>
       </div>

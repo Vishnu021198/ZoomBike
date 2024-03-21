@@ -1,32 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import { Card } from 'flowbite-react';
+import { selectToken, selectSelectedBike, selectUserId } from '../redux/Slices/userSlice';
+
 
 function UserReviewBookingComponent() {
-    const { bikeId } = useParams();
+    const selectedBike = useSelector(selectSelectedBike);
+    console.log("Selected Bikeeeeee", selectedBike)
+    const userToken = useSelector(selectToken);
+    console.log("TOKENNNN",userToken)
+    const user = useSelector(selectUserId);
+    console.log("Userrrrr", user)
+
+    
+    
+
     const [bike, setBike] = useState(null);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [totalAmount, setTotalAmount] = useState(0);
     const [taxAndServiceFee, setTaxAndServiceFee] = useState(0);
+    const bikeId = selectedBike.id;
+    const owner_name = selectedBike.owner_name
+    
+
 
 
 
     useEffect(() => {
         const fetchBikeDetails = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/user/bike-detail/${bikeId}`);
-                setBike(response.data);
-                console.log('Fetched bike details:', response.data);
+                setBike(selectedBike);
+                console.log("Bike detaileeeee", selectedBike)
             } catch (error) {
                 console.error('Error fetching bike details:', error);
             }
         };
 
         fetchBikeDetails();
-    }, [bikeId]);
+    }, [selectedBike]);
 
     useEffect(() => {
         if (startDate && endDate) {
@@ -55,23 +70,56 @@ function UserReviewBookingComponent() {
 
     const handleProceedToPayment = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/user/check-availability/', {
+            if (!bike) {
+                console.error('Bike details not fetched yet.');
+                return;
+            }
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const phoneNumber = document.getElementById('phone').value;
+            const aadharNumber = document.getElementById('company').value;
+            
+            
+            // Format dates to "YYYY-MM-DD" format
+            const formattedStartDate = startDate.toISOString().substr(0, 10);
+            const formattedEndDate = endDate.toISOString().substr(0, 10);
+    
+            const availabilityResponse = await axios.get('http://127.0.0.1:8000/api/user/check-availability/', {
                 params: {
-                    start_date: startDate,
-                    end_date: endDate,
-                    bike_id: bikeId
+                    start_date: formattedStartDate,
+                    end_date: formattedEndDate,
+                    bike_id: bikeId 
                 }
             });
-            if (response.data.length > 0) {
-                // Bikes are available, proceed to payment
-                console.log('Proceeding to payment...');
+    
+            if (availabilityResponse.data.length > 0) {
+                const createBookingResponse = await axios.post('http://127.0.0.1:8000/api/user/create-booking/', {
+                    user: user,
+                    bike: bikeId,
+                    pickup_date: formattedStartDate,
+                    drop_date: formattedEndDate,
+                    number_of_days: Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)),
+                    city: bike.city,
+                    amount_paid: totalAmount,
+                    owner: owner_name,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone_number: phoneNumber,
+                    aadhar_number: aadharNumber,
+                    is_paid: false,
+                });
+    
+                console.log('Booking created:', createBookingResponse.data);
+                // Handle success
             } else {
                 alert('Selected dates are not available for booking. Please choose different dates.');
             }
         } catch (error) {
-            console.error('Error checking availability:', error);
+            console.error('Error checking availability or creating booking:', error);
+            // Handle error
         }
     };
+    
     
 
     return (

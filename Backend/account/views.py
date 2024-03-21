@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from account.serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, SendPasswordResetEmailSerializer, VerifyAccountSerializer
+from account.serializers import BookingSerializer, UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, SendPasswordResetEmailSerializer, VerifyAccountSerializer
 from django.contrib.auth import authenticate
 from account.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -88,8 +88,7 @@ class UserLoginView(APIView):
             user = authenticate(email=email, password=password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({'token':token,'msg':'Login Success'},
-                    status=status.HTTP_200_OK)
+                return Response({'token': token, 'user_id': user.id, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
             else:
                 return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}},
                     status=status.HTTP_404_NOT_FOUND)
@@ -155,7 +154,7 @@ def google_login(request):
 class Home(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
-        bikes = Bike.objects.all()[:4]
+        bikes = Bike.objects.all()[:3]
         serializer = BikeSerializer(bikes, many=True)
         return Response(serializer.data)
 
@@ -193,7 +192,7 @@ class BikeList(APIView):
 
 class BikeDetailView(APIView):
     permission_classes = [AllowAny]
-    def get(self, request, bikeId):
+    def get(self, bikeId):
         try:
             bike = Bike.objects.get(id=bikeId)
             serializer = BikeSerializer(bike)
@@ -238,6 +237,15 @@ class CheckAvailabilityView(APIView):
             return Response({"error": "Please provide bike_id, start_date, and end_date parameters."}, status=status.HTTP_400_BAD_REQUEST)
         
 
+class BookingCreateView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, format=None):
+        print("Data received:", request.data)
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileView(APIView):
@@ -252,6 +260,14 @@ class UserProfileView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User details not found"}, status=status.HTTP_404_NOT_FOUND)
 
+class UserProfileUpdateView(APIView):
+    def put(self, request):
+        user = request.user  # Get the authenticated user
+        serializer = UserProfileSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

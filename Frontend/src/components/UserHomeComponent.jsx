@@ -3,9 +3,9 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import { setFilteredBikes } from '../redux/Slices/userSlice';
+import { setFilteredBikes, setBike } from '../redux/Slices/userSlice';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+
 
 const CITY_CHOICES = [
   ['Kasaragod', 'Kasaragod'],
@@ -59,6 +59,7 @@ function UserHomeComponent() {
   const handleCityChange = (e) => {
     setSelectedCity(e.target.value);
   };
+  
   const morebikes = () => {
     navigate('/userbikelist')
   };
@@ -93,6 +94,12 @@ function UserHomeComponent() {
     } catch (error) {
       console.error('Error fetching bikes:', error);
     }
+  };
+
+  const handleBikeClick = (selectedBike) => {
+    dispatch(setBike(selectedBike));
+    console.log('Selected Bike:', selectedBike);
+    navigate('/userbikedetail') 
   };
   
 
@@ -191,13 +198,13 @@ function UserHomeComponent() {
       <div className="flex flex-wrap justify-center">
         
         {bikes.map((bike) => (
+          <a href="#" onClick={() => handleBikeClick(bike)}>
             <div key={bike.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mr-2 ml-10">
-            <Link to={`/userbikedetail/${bike.id}`}>
-            <a href="#">
+            <a>
                 <img className="p-8 rounded-t-lg" src={`http://127.0.0.1:8000/${bike.images}`} alt="product image" />
             </a>
             <div className="px-5 pb-5">
-                <a href="#">
+                <a>
                     <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{bike.brand.name} - {bike.model.name}</h5>
                 </a>
                 <h5 className="text-xs mt-2 font-semibold tracking-tight text-gray-900 dark:text-white">{bike.city}</h5>
@@ -207,8 +214,8 @@ function UserHomeComponent() {
                 </div>
                 
             </div>
-            </Link>
             </div>
+          </a>
             ))}
         </div>
         <div> 

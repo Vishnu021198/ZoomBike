@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
-import { setUserEmail, setToken, setUserName } from '../redux/Slices/userSlice';
+import { setUserId, setUserEmail, setToken, setUserName } from '../redux/Slices/userSlice';
 import axios from 'axios';
 
 
@@ -34,7 +34,9 @@ export const UserLoginComponent = () => {
         console.log(data);
         console.log('success');
         dispatch(setToken(data.token));
+        dispatch(setUserId(data.user_id));
         console.log(data.token,"TOKENNNN")
+        console.log(data.user_id,"Userrr")
         navigate('/homepage');
         // You may want to store the token in localStorage or a state management library
       } else {

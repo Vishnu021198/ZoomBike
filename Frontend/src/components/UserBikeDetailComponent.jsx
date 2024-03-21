@@ -1,37 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { selectToken, selectSelectedBike } from '../redux/Slices/userSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function UserBikeDetailComponent() {
-    const { bikeId } = useParams();
-    const [bike, setBike] = useState(null);
-    const userToken = useSelector(state => state.user.token);
     const dispatch = useDispatch();
+    const [bike, setBike] = useState(null);
+    const userToken = useSelector(selectToken);
+    console.log("TOKENNNN",userToken)
+    const selectedBike = useSelector(selectSelectedBike);
+    console.log("Selected Bikeeeeee", selectedBike)
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBikeDetails = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/user/bike-detail/${bikeId}`);
-                setBike(response.data);
-                console.log('Fetched bike details:', response.data);
+                setBike(selectedBike);
             } catch (error) {
                 console.error('Error fetching bike details:', error);
             }
         };
 
         fetchBikeDetails();
-    }, [bikeId]);
+    }, [selectedBike]);
 
     const handleBookNow = () => {
         if (userToken) {
-            window.location.href = `/userreviewbooking/${bikeId}`;
+            navigate('/userreviewbooking');
         } else {
-            window.location.href = '/login';
+            navigate('/login');
         }
     };
-
-
 
     return (
         <>
