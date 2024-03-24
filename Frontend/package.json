@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.2",
     "flowbite-react": "^0.7.2",
     "jwt-decode": "^4.0.0",
+    "razorpay": "^2.9.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-datepicker": "^4.25.0",

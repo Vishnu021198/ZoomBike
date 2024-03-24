@@ -191,3 +191,8 @@ EMAIL_HOST_PASSWORD = 'xzph ebys qpka fhom'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 MEDIA_URL = '/media/'
+
+#Razorpay
+
+RAZORPAY_KEY_ID = 'rzp_test_bENwqWBNfFVEOx'
+RAZORPAY_KEY_SECRET = '5TvrfLQbZQnAozc4MiJ52vmJ'

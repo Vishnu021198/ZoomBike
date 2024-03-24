@@ -111,14 +111,89 @@ function UserReviewBookingComponent() {
     
                 console.log('Booking created:', createBookingResponse.data);
                 // Handle success
+                if (createBookingResponse.status === 201) {
+                    console.log("Entered")
+                    const bookingId = createBookingResponse.data.id;
+                    console.log("Booking Id:", bookingId)
+    
+                    // Initiate payment with Razorpay
+                    const razorpayResponse = await axios.post('http://127.0.0.1:8000/api/user/initiate-payment/', {
+                        booking_id: bookingId,
+                        amount: totalAmount,
+                    });
+    
+                    if (razorpayResponse.status === 200) {
+                        const { key, amount, orderId, currency, notes } = razorpayResponse.data;
+                        const options = {
+                            key: key,
+                            amount: amount,
+                            currency: currency,
+                            order_id: orderId,
+                            image: 'https://yt3.googleusercontent.com/ytc/AIf8zZSJPFrHNAsABoBFZaXm4KOC5DIDuA2a8vZw9yuoQg=s900-c-k-c0x00ffffff-no-rj',
+                            name: 'ZoomBike',
+                            description: 'Bike Rent Payment',
+                            // Add more options as needed
+                            handler: function (response) {
+                                // Handle successful payment response
+                                console.log('Payment successful:', response);
+                                // Update the booking status to paid
+                                updateBookingStatus(bookingId);
+                            },
+                            prefill: {
+                                name: `${firstName} ${lastName}`,
+                                email: user.email, // Assuming you have the user's email
+                                contact: phoneNumber,
+                            },
+                            // Add more prefill options as needed
+                        };
+    
+                        const rzp = new Razorpay(options);
+                        rzp.open();
+                    } else {
+                        console.error('Failed to initiate payment with Razorpay');
+                    }
+                } else {
+                    console.error('Failed to create booking');
+                }
             } else {
                 alert('Selected dates are not available for booking. Please choose different dates.');
             }
         } catch (error) {
-            console.error('Error checking availability or creating booking:', error);
+            console.error('Error checking availability, creating booking, or initiating payment:', error);
             // Handle error
         }
     };
+
+    const updateBookingStatus = async (bookingId) => {
+        try {
+            // Call API to update booking status
+            const response = await axios.put(`http://127.0.0.1:8000/api/user/update-booking/${bookingId}/`, {
+                is_paid: true
+            });
+            console.log('Booking status updated:', response.data);
+        } catch (error) {
+            console.error('Error updating booking status:', error);
+        }
+    };
+
+    useEffect(() => {
+        const initializeRazorpay = () => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            script.onload = () => {
+                // Razorpay is loaded, you can now safely initialize it
+            };
+            document.body.appendChild(script);
+
+            // Cleanup function to remove the script when component unmounts
+            return () => {
+                document.body.removeChild(script);
+            };
+        };
+
+        initializeRazorpay();
+    }, []);
     
     
 

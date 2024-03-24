@@ -12,6 +12,9 @@ from bike.models import Bike
 from bike.serializers import BikeSerializer
 from django.utils import timezone
 from datetime import datetime
+from bike.models import Booking
+import razorpay
+from django.conf import settings
 
 
 
@@ -246,7 +249,62 @@ class BookingCreateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class BookingUpdateView(APIView):
+    permission_classes = [AllowAny]
 
+    def put(self, request, booking_id, format=None):
+        try:
+            booking = Booking.objects.get(pk=booking_id)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
+        is_paid = data.get('is_paid', False)
+
+        booking.is_paid = is_paid
+        booking.save()
+
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class InitiatePaymentView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        # Get booking ID and amount from request data
+        booking_id = request.data.get('booking_id')
+        print("Booking Id:", booking_id)
+        amount = request.data.get('amount')
+        print("Amount:", amount)
+
+        # Get the booking object
+        booking = Booking.objects.get(id=booking_id)
+        print("Booking:", booking)
+
+        # Initialize Razorpay client
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        # Create Razorpay order
+        order_data = {
+            'amount': int(amount * 100),  # Amount in paise
+            'currency': 'INR',
+            'receipt': 'receipt_' + str(booking.id),
+            # Add more data as needed
+        }
+        order = client.order.create(data=order_data)
+        print("Order:", order)
+
+
+        # Return order data to frontend
+        return Response({
+            'key': settings.RAZORPAY_KEY_ID,
+            'amount': order['amount'],
+            'orderId': order['id'],
+            'currency': order['currency'],
+            'notes': order['notes'],
+            # Add more data as needed
+        })
 
 class UserProfileView(APIView):
     permission_classes = [AllowAny]  # Ensure user is authenticated
