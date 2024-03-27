@@ -16,6 +16,7 @@ import OwnerBikeListPage from './Pages/OwnerBikeListPage'
 import UserProfilePage from './Pages/UserProfilePage'
 import UserBikeDetailPage from './Pages/UserBikeDetailPage'
 import UserReviewBookingPage from './Pages/UserReviewBookingPage'
+import UserBookingPage from './Pages/UserBookingPage'
 function App() {
   
 
@@ -39,6 +40,7 @@ function App() {
         <Route path="/userprofile" element={<UserProfilePage/>}/>
         <Route path="/userbikedetail" element={<UserBikeDetailPage />}/>
         <Route path="/userreviewbooking" element={<UserReviewBookingPage/>}/>
+        <Route path="/userbooking" element={<UserBookingPage/>}/>
         
         </Routes>
       </div>

@@ -318,6 +318,22 @@ class UserProfileView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User details not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class UserBookingListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        bookings = Booking.objects.filter(user=user, is_paid=True)
+        serializer = BookingSerializer(bookings, many=True)
+
+        for booking in serializer.data:
+            bike_id = booking['bike'] 
+            bike = Bike.objects.get(pk=bike_id)
+            bike_serializer = BikeSerializer(bike)
+            booking['bike_details'] = bike_serializer.data
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class UserProfileUpdateView(APIView):
     def put(self, request):
         user = request.user  # Get the authenticated user
@@ -334,12 +350,6 @@ class UserProfileUpdateView(APIView):
 
 
 
-# class UserProfileView(APIView):
-#     renderer_classes = [UserRenderer]
-#     permission_classes = [IsAuthenticated]
-#     def get(self, request, format=None):
-#         serializer = UserProfileSerializer(request.user)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # class UserChangePasswordView(APIView):
 #     renderer_classes = [UserRenderer]
