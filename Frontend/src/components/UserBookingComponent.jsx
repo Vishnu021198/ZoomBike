@@ -1,48 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Card } from "flowbite-react";
 
 function UserBookingComponent() {
-  const [bookings, setBookings] = useState([]);
-  const [userDetails, setUserDetails] = useState(null);
+    const navigate = useNavigate();
+    const [bookings, setBookings] = useState([]);
+    const [userDetails, setUserDetails] = useState(null);
 
-  const user = useSelector(state => state.user);
-  const accessToken = useSelector(state => state.user.token.access);
+    const user = useSelector(state => state.user);
+    const accessToken = useSelector(state => state.user.token.access);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/user/user-profile/', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-        setUserDetails(response.data);
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-      }
-    };
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/user/user-profile/', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+            });
+            setUserDetails(response.data);
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
+        };
 
-    fetchUserDetails();
-  }, [accessToken]);
+        fetchUserDetails();
+    }, [accessToken]);
 
-  useEffect(() => {
-    const fetchUserBookings = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/user/bookings/', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-        setBookings(response.data);
-      } catch (error) {
-        console.error('Error fetching user bookings:', error);
-      }
-    };
+    useEffect(() => {
+        const fetchUserBookings = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/user/bookings/', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+            });
+            setBookings(response.data);
+        } catch (error) {
+            console.error('Error fetching user bookings:', error);
+        }
+        };
 
-    fetchUserBookings();
-  }, [accessToken]);
+        fetchUserBookings();
+    }, [accessToken]);
 
   return (
     <>  
@@ -55,6 +57,12 @@ function UserBookingComponent() {
         <div className="mt-5 flex justify-center">
             <h1 className="text-gray font-bold text-5xl">YOUR BOOKINGS</h1>
         </div>
+        {bookings.length === 0 ? (
+          <div className="flex justify-center items-center flex-col mt-10">
+            <p className="text-xl text-gray-600 mb-4">You Don't have any Bookings Yet</p>
+            <button onClick={() => navigate('/userbikelist')} className="text-white mb-10 bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Book Now</button>
+          </div>
+        ) : (
         <div className="flex flex-wrap justify-left ml-32">
             {bookings.map(booking => (
             <Card key={booking.id} className="max-w-sm mt-10 mb-10 ml-5 mr-5" imgSrc={`http://127.0.0.1:8000/${booking.bike_details?.images}`}>
@@ -83,6 +91,7 @@ function UserBookingComponent() {
             </Card>
             ))}
         </div>
+        )}
     </>
   )
 }

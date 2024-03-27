@@ -320,8 +320,7 @@ class UserProfileView(APIView):
 
 
 class UserBookingListView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [AllowAny]
     def get(self, request):
         user = request.user
         bookings = Booking.objects.filter(user=user, is_paid=True)

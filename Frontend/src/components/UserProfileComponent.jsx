@@ -6,7 +6,7 @@ function UserProfileComponent() {
   const [userDetails, setUserDetails] = useState(() => {
     const savedUserDetails = localStorage.getItem('userDetails');
     return savedUserDetails ? JSON.parse(savedUserDetails) : null;
-});
+  });
     const user = useSelector((state) => state.user);
     const Token = useSelector(state => state.user.token);
     const accessToken = Token.access
