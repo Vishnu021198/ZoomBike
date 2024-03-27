@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
@@ -14,6 +15,7 @@ function UserReviewBookingComponent() {
     console.log("TOKENNNN",userToken)
     const user = useSelector(selectUserId);
     console.log("Userrrrr", user)
+    const navigate = useNavigate();
 
     
     
@@ -107,6 +109,7 @@ function UserReviewBookingComponent() {
                     phone_number: phoneNumber,
                     aadhar_number: aadharNumber,
                     is_paid: false,
+                    is_canceled: false,
                 });
     
                 console.log('Booking created:', createBookingResponse.data);
@@ -138,6 +141,7 @@ function UserReviewBookingComponent() {
                                 console.log('Payment successful:', response);
                                 // Update the booking status to paid
                                 updateBookingStatus(bookingId);
+                                navigate('/userorderconfirmed');
                             },
                             prefill: {
                                 name: `${firstName} ${lastName}`,

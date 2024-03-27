@@ -8,6 +8,7 @@ function UserBookingComponent() {
     const navigate = useNavigate();
     const [bookings, setBookings] = useState([]);
     const [userDetails, setUserDetails] = useState(null);
+    const [cancelledBookings, setCancelledBookings] = useState([]);
 
     const user = useSelector(state => state.user);
     const accessToken = useSelector(state => state.user.token.access);
@@ -46,6 +47,26 @@ function UserBookingComponent() {
         fetchUserBookings();
     }, [accessToken]);
 
+    const handleCancelBooking = async (bookingId) => {
+        try {
+            await axios.post('http://127.0.0.1:8000/api/user/cancel-booking/', { booking_id: bookingId }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            
+            const updatedBookings = bookings.map(booking => {
+                if (booking.id === bookingId) {
+                    return { ...booking, is_canceled: true };
+                }
+                return booking;
+            });
+            setBookings(updatedBookings);
+        } catch (error) {
+            console.error('Error cancelling booking:', error);
+        }
+    };
+    
   return (
     <>  
         <div>
@@ -87,7 +108,11 @@ function UserBookingComponent() {
                 <p className="font-normal text-gray-700 dark:text-gray-400">
                     {booking.first_name} {booking.last_name}, {booking.phone_number}
                 </p>
-                <button href="#" className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Cancel Booking</button>
+                {booking.is_canceled ? (
+                    <p className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" >Cancelled</p>
+                ) : (
+                    <button onClick={() => handleCancelBooking(booking.id)} className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Cancel Booking</button>
+                )}
             </Card>
             ))}
         </div>

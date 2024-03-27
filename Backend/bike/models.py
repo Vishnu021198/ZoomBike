@@ -68,6 +68,7 @@ class Booking(models.Model):
     phone_number = models.CharField(max_length=15)
     aadhar_number = models.CharField(max_length=12)
     is_paid = models.BooleanField(default=False)
+    is_canceled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.email} - {self.bike.brand.name} {self.bike.model.name} - {self.pickup_date} to {self.drop_date}"

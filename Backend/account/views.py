@@ -333,6 +333,24 @@ class UserBookingListView(APIView):
             booking['bike_details'] = bike_serializer.data
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class CancelBookingView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        booking_id = request.data.get('booking_id')  # Get the booking ID from the request data
+        print("Booking", booking_id)
+        try:
+            booking = Booking.objects.get(pk=booking_id)
+        except Booking.DoesNotExist:
+            return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        booking.is_canceled = True
+        booking.save()
+
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserProfileUpdateView(APIView):
     def put(self, request):
         user = request.user  # Get the authenticated user
