@@ -17,26 +17,6 @@ function AdminTransactionComponent() {
     fetchTransactions();
   }, []);
 
-  const fetchUserName = async (userId) => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/admin/users/${userId}`);
-      return response.data.name;
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      return '';
-    }
-  };
-
-  const fetchBikeName = async (bikeId) => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/admin/bikes/${bikeId}`);
-      return `${response.data.brand.name} - ${response.data.model.name}`;
-    } catch (error) {
-      console.error('Error fetching bike details:', error);
-      return '';
-    }
-  };
-
   return (
     <>
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
