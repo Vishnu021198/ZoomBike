@@ -26,7 +26,7 @@ function UserReviewBookingComponent() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [taxAndServiceFee, setTaxAndServiceFee] = useState(0);
     const bikeId = selectedBike.id;
-    const owner_name = selectedBike.owner_name
+    const owner = selectedBike.owner
     
 
 
@@ -103,7 +103,7 @@ function UserReviewBookingComponent() {
                     number_of_days: Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)),
                     city: bike.city,
                     amount_paid: totalAmount,
-                    owner: owner_name,
+                    owner: owner,
                     first_name: firstName,
                     last_name: lastName,
                     phone_number: phoneNumber,

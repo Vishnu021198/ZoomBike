@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Owner
+from bike.models import Booking
 
 class OwnerRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
@@ -43,3 +44,9 @@ class OwnerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Owner
         fields = ['id', 'email', 'name', 'phone_number', 'bike_license_number']
+
+class BookingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Booking
+        fields = '__all__'

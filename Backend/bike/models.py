@@ -62,7 +62,7 @@ class Booking(models.Model):
     number_of_days = models.PositiveIntegerField()
     city = models.CharField(max_length=50)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    owner = models.CharField(max_length=100)
+    owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)

@@ -5,9 +5,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from owner.renderers import UserRenderer
 from .models import Owner
-from .serializers import OwnerRegistrationSerializer, OwnerLoginSerializer, VerifyAccountSerializer, OwnerSerializer, OwnerProfileSerializer
+from .serializers import OwnerRegistrationSerializer, OwnerLoginSerializer, VerifyAccountSerializer, OwnerSerializer, OwnerProfileSerializer, BookingSerializer
 from owner.emails import *
 from rest_framework.permissions import AllowAny
+from bike.models import Bike, Booking
+from bike.serializers import BikeSerializer
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -117,5 +119,23 @@ class OwnerProfileUpdateView(APIView):
             print("Success")
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class OwnerBookingListView(APIView):
+    
+    def get(self, request, id):
+        owner = Owner.objects.get(id=id)
+        print("Owner", owner)
+        bookings = Booking.objects.filter(owner=owner, is_paid=True)
+        serializer = BookingSerializer(bookings, many=True)
+
+        for booking in serializer.data:
+            bike_id = booking['bike'] 
+            bike = Bike.objects.get(pk=bike_id)
+            bike_serializer = BikeSerializer(bike)
+            booking['bike_details'] = bike_serializer.data
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
         
     

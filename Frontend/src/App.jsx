@@ -20,6 +20,7 @@ import UserBookingPage from './Pages/UserBookingPage'
 import UserOrderConfirmedPage from './Pages/UserOrderConfirmedPage'
 import AdminTransactionPage from './Pages/AdminTransactionPage'
 import OwnerBikeEditPage from './Pages/OwnerBikeEditPage'
+import OwnerBookingPage from './Pages/OwnerBookingPage'
 function App() {
   
 
@@ -35,7 +36,8 @@ function App() {
           <Route path="/ownerlogin" element={<OwnerLoginPage/>}/>
           <Route path="/ownerprofile" element={<OwnerProfilePage/>}/>
           <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>
-          <Route path="/ownereditbike" element={<OwnerBikeEditPage/>}/>    
+          <Route path="/ownereditbike" element={<OwnerBikeEditPage/>}/>
+          <Route path="/ownerbooking" element={<OwnerBookingPage/>}/>
           
 
           <Route path="/adminlogin" element={<AdminLoginPage/>}/>
