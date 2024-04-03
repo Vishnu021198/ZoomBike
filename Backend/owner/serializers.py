@@ -38,3 +38,8 @@ class OwnerSerializer(serializers.ModelSerializer):
         model = Owner
         fields = ['email', 'name', 'phone_number', 'bike_license_number', 'is_verified', 'is_active', 'is_staff', 'created_at', 'updated_at']
 
+
+class OwnerProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Owner
+        fields = ['id', 'email', 'name', 'phone_number', 'bike_license_number']

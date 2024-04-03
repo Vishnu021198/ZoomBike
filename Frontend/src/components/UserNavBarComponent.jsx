@@ -7,7 +7,7 @@ export const UserNavBarComponent = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown visibility
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const Token = useSelector(state => state.user.token);
   const accessToken = Token.access;
 
@@ -21,21 +21,14 @@ export const UserNavBarComponent = () => {
         });
         setUserName(response.data.name);
         setLoggedIn(true);
-        localStorage.setItem('userName', response.data.name);
       } catch (error) {
         console.error('Error fetching user details:', error);
         setLoggedIn(false);
       }
     };
   
-    const storedUserName = localStorage.getItem('userName');
-    if (storedUserName) {
-      setUserName(storedUserName);
-      setLoggedIn(true);
-    } else {
-      if (Token) {
-        fetchUserName();
-      }
+    if (Token) {
+      fetchUserName();
     }
   }, [accessToken]);
 

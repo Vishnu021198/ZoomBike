@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from owner.renderers import UserRenderer
 from .models import Owner
-from .serializers import OwnerRegistrationSerializer, OwnerLoginSerializer, VerifyAccountSerializer, OwnerSerializer
+from .serializers import OwnerRegistrationSerializer, OwnerLoginSerializer, VerifyAccountSerializer, OwnerSerializer, OwnerProfileSerializer
 from owner.emails import *
 from rest_framework.permissions import AllowAny
 
@@ -98,9 +98,24 @@ class OwnerProfileView(APIView):
         user = request.user  # Get the authenticated user
         try:
             owner = Owner.objects.get(email=user.email)  # Fetch the owner object corresponding to the user's email
-            serializer = OwnerSerializer(owner)  # Serialize the owner object
+            serializer = OwnerProfileSerializer(owner)  # Serialize the owner object
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Owner.DoesNotExist:
             return Response({"error": "Owner details not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class OwnerProfileUpdateView(APIView):
+    
+    def put(self, request, id):  
+        try:
+            owner = Owner.objects.get(id=id) 
+        except Owner.DoesNotExist:
+            return Response({"error": "Owner not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OwnerProfileSerializer(owner, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("Success")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     

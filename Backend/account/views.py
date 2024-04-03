@@ -317,6 +317,16 @@ class UserProfileView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "User details not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class UserProfileUpdateView(APIView):
+    def put(self, request):
+        user = request.user  # Get the authenticated user
+        serializer = UserProfileSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserBookingListView(APIView):
@@ -351,14 +361,6 @@ class CancelBookingView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserProfileUpdateView(APIView):
-    def put(self, request):
-        user = request.user  # Get the authenticated user
-        serializer = UserProfileSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

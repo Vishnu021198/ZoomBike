@@ -4,7 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 class OwnerManager(BaseUserManager):
     def create_user(self, email, name, password=None, password2=None, bike_license_number=None, phone_number=None):
         if not email:
-            raise ValueError("Users must have an email address")
+            raise ValueError("Owner must have an email address")
 
         user = self.model(
             email=self.normalize_email(email),
@@ -23,7 +23,6 @@ class Owner(AbstractBaseUser):
     email = models.EmailField(
         verbose_name="Email",
         max_length=255,
-        unique=True,
     )
     name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15, blank=False, null=False)

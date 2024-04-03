@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
 
 const CITY_CHOICES = [
     ['Kasaragod', 'Kasaragod'],
@@ -41,6 +42,7 @@ console.log(Token.access,"TOKEN")
     const [bikeModels, setBikeModels] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/bike/bike-brands/')
@@ -109,6 +111,7 @@ console.log(Token.access,"TOKEN")
             });
     
             console.log(response.data);
+            navigate('/ownerbikelist');
         } catch (error) {
             console.error('Error adding bike:', error);
         }

@@ -5,11 +5,13 @@ from rest_framework.generics import ListAPIView
 from account.models import User
 from owner.models import Owner
 from rest_framework import status
-from .serializers import UserSerializers, OwnerSerializers
+from .serializers import UserSerializers, OwnerSerializers, TransactionSerializers
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
+from bike.models import Booking, Bike
+from bike.serializers import BikeSerializer
 
 # Create your views here.
 
@@ -61,3 +63,20 @@ class OwnerListView(ListAPIView):
     permission_classes = [AllowAny]
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializers
+
+class TransactionListView(ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = Booking.objects.all()
+    serializer_class = TransactionSerializers
+
+@api_view(['GET'])
+def get_user_details(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    serializer = UserSerializers(user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_bike_details(request, bike_id):
+    bike = get_object_or_404(Bike, id=bike_id)
+    serializer = BikeSerializer(bike)
+    return Response(serializer.data)
