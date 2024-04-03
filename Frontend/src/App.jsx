@@ -19,6 +19,7 @@ import UserReviewBookingPage from './Pages/UserReviewBookingPage'
 import UserBookingPage from './Pages/UserBookingPage'
 import UserOrderConfirmedPage from './Pages/UserOrderConfirmedPage'
 import AdminTransactionPage from './Pages/AdminTransactionPage'
+import OwnerBikeEditPage from './Pages/OwnerBikeEditPage'
 function App() {
   
 
@@ -33,7 +34,8 @@ function App() {
           <Route path="/ownerverifyOTP" element={<OwnerOTPVerificationPage/>}/>
           <Route path="/ownerlogin" element={<OwnerLoginPage/>}/>
           <Route path="/ownerprofile" element={<OwnerProfilePage/>}/>
-          <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>      
+          <Route path="/ownerbikelist" element={<OwnerBikeListPage/>}/>
+          <Route path="/ownereditbike" element={<OwnerBikeEditPage/>}/>    
           
 
           <Route path="/adminlogin" element={<AdminLoginPage/>}/>

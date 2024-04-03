@@ -61,6 +61,42 @@ def add_bike(request):
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_bike(request, id):
+    try:
+        bike = Bike.objects.get(id=id)
+        serializer = BikeSerializer(bike, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Bike.DoesNotExist:
+        return Response({'error': 'Bike not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_bike(request, id):
+    try:
+        bike = Bike.objects.get(id=id)
+        if bike.owner.email != request.user.email:
+            return Response({"error": "You are not authorized to delete this bike."}, status=status.HTTP_403_FORBIDDEN)
+        bike.delete()
+        return Response({"message": "Bike deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def bike_details(request, id):
+    try:
+        bike = Bike.objects.get(id=id)
+        serializer = BikeSerializer(bike)
+        print("Success")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Bike.DoesNotExist:
+        return Response({'error': 'Bike not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class BikeBrandView(APIView):
     permission_classes=[AllowAny]
